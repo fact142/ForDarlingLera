@@ -1,0 +1,176 @@
+import React from "react";
+ 
+class AppView extends React.Component{
+ 
+    constructor(props){
+        super(props);
+        this.state = {newItem: ""};
+         
+        this.onInputChange = this.onInputChange.bind(this);
+        this.onClick = this.onClick.bind(this);
+        this.onUpdateText = this.onUpdateText.bind(this);
+    }
+    onInputChange(e){
+        this.setState({newItem:e.target.value});
+    }
+    onClick(e){
+        if(this.state.newItem){
+            this.props.onAddItem(this.state.newItem);
+            this.setState({newItem:" "});
+        }
+    }
+
+    onUpdateText = (text, i) => {
+        var arr = this.props.phones;
+        arr[i] = text;
+        this.setState({
+            phones: arr
+        });
+    }
+    render(){
+        let update = this.props.onUpdateText;
+        let remove = this.props.onRemoveItem;
+        return <div> 
+                <input type="text" value={this.state.newItem} onChange={this.onInputChange} />    
+                <button onClick={this.onClick}>Добавить</button>                
+                <h2>Список смартфонов</h2>
+                <div>
+                    {
+                        this.props.phones.map(function(item, i){
+                             
+                            return <Phone key={i} index={i} text={item} onRemove={remove} update={update}/> 
+                        })
+                    }
+                </div>
+            </div>;
+    }
+}
+ 
+class Phone extends React.Component{
+ 
+    constructor(props){
+        super(props);
+        this.state = {
+            text: props.text, 
+            isEdit: false};
+        this.onClick = this.onClick.bind(this);
+        this.edit = this.edit.bind(this);
+        this.save = this.save.bind(this);
+    }
+    edit() {
+        this.setState(state => ({
+            isEdit: !state.isEdit
+          }));
+    }
+    save() {
+        this.props.update(this.refs.newTxt.value, this.props.index);
+        this.setState(state => ({
+            isEdit: !state.isEdit,
+            newItem: " "
+          }));
+    }
+    onClick(e){
+        this.props.onRemove(this.state.text);
+    }
+    rendNorm(){
+        return <div> 
+                <p>
+                    <b>{this.state.text}</b><br />
+                    <button onClick={this.onClick}>Удалить</button> 
+                    <button onClick={this.edit}>Изменить</button> 
+                </p>
+            </div>;
+    }
+    renEdit(){
+        return <div> 
+                <p>
+                    <textarea ref="newTxt" defaultValue={this.state.text}></textarea>
+                    <button onClick={this.save}>Сохранить</button> 
+                </p>
+            </div>;
+    }
+    render(){
+
+        if (this.state.isEdit){
+            return this.renEdit();   
+        } else {
+            return this.rendNorm();
+        }
+    }
+}
+export default AppView;
+
+
+import React from "react";
+
+class AppView extends React.Component{
+
+    constructor(props){
+        super(props);
+        this.state = {newItem: ""};
+
+        this.onInputChange = this.onInputChange.bind(this);
+        this.onClick = this.onClick.bind(this);
+    }
+    onInputChange(e){
+        this.setState({newItem:e.target.value});
+    }
+    onClick(e){
+        if(this.state.newItem){
+            this.props.onAddItem(this.state.newItem);
+            this.setState({newItem:" "});
+        }
+    }
+    render(){
+
+        let remove = this.props.onRemoveItem;
+        let addItem = this.props.onAddItem;
+        return <div>
+            <input type="text" value={this.state.newItem} onChange={this.onInputChange} />
+            <button onClick={this.onClick}>Добавить</button>
+            <h2>Список смартфонов</h2>
+            <div>
+                {
+                    this.props.phones.map(function(item){
+                        return <Phone key={item} text={item} onRemove={remove} onAddItem={addItem}/>
+                    })
+                }
+            </div>
+        </div>;
+    }
+}
+
+class Phone extends React.Component{
+
+    constructor(props){
+        super(props);
+        this.state = {text: props.text, newItem: props.text};
+        this.onClick = this.onClick.bind(this);
+        this.onClickEdit = this.onClickEdit.bind(this);
+
+        this.onInputChange = this.onInputChange.bind(this);
+
+    }
+    onInputChange(e){
+        this.setState({newItem:e.target.value});
+    }
+    onClick(e){
+        this.props.onRemove(this.state.text);
+    }
+    onClickEdit(e){
+        this.props.onRemove(this.state.text);
+        if(this.state.newItem){
+            this.props.onAddItem(this.state.newItem);
+        }
+    }
+    render(){
+        return <div>
+            <p>
+                <input type="text" value={this.state.newItem} onChange={this.onInputChange} />
+                <button onClick={this.onClickEdit}>Изменить</button>
+                <button onClick={this.onClick}>Удалить</button>
+             </p>
+        </div>;
+    }
+}
+export default AppView;
